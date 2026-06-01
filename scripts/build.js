@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const OUTPUT_DIR = path.join(process.cwd(), 'dist');
-const COPY_ITEMS = ['index.html', 'README.md', 'api', 'images'];
+const COPY_ITEMS = ['index.html', 'images'];
 
 function copyRecursive(source, destination) {
   const stat = fs.statSync(source);

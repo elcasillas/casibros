@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { spawnSync } = require('child_process');
 
 function assert(condition, message) {
   if (!condition) {
@@ -20,8 +21,17 @@ function checkEmbeddedScript() {
   new Function(match[1]);
 }
 
+function checkModuleSyntax(filePath) {
+  const result = spawnSync(process.execPath, ['--check', filePath], {
+    encoding: 'utf8'
+  });
+
+  assert(result.status === 0, result.stderr || result.stdout || `Syntax check failed for ${filePath}`);
+}
+
 try {
   checkFileSyntax('api/submit-property.js');
+  checkModuleSyntax('worker.mjs');
   checkEmbeddedScript();
   console.log('Lint checks passed.');
 } catch (error) {
