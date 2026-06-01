@@ -1,4 +1,11 @@
 const { randomUUID } = require('crypto');
+const { Resend } = require('resend');
+
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+const PROPERTY_SUBMISSION_TO = process.env.PROPERTY_SUBMISSION_TO || 'info@casibros.com';
+const PROPERTY_SUBMISSION_FROM =
+  process.env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>';
 
 const ALLOWED_PROPERTY_TYPES = new Set([
   'Single Family Home',
@@ -82,6 +89,28 @@ function parseCurrency(value) {
 
   const numeric = Number(cleaned);
   return Number.isFinite(numeric) && numeric >= 0 ? numeric : null;
+}
+
+function formatCurrency(value) {
+  const numeric = parseCurrency(value);
+  if (numeric === null) {
+    return '';
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: Number.isInteger(numeric) ? 0 : 2
+  }).format(numeric);
+}
+
+function escapeHtml(value) {
+  return trimString(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function validatePayload(payload) {
@@ -170,6 +199,59 @@ function maskPhone(phone) {
   return `***-***-${digits.slice(-4)}`;
 }
 
+function formatEmailHtml(body, submissionId) {
+  const askingPrice = body.askingPrice ? formatCurrency(body.askingPrice) : 'Not provided';
+  const reasonForSelling = body.reasonForSelling ? escapeHtml(body.reasonForSelling).replace(/\n/g, '<br />') : 'Not provided';
+  const additionalDetails = body.additionalDetails
+    ? escapeHtml(body.additionalDetails).replace(/\n/g, '<br />')
+    : 'Not provided';
+
+  return `
+    <div style="font-family: Arial, Helvetica, sans-serif; color: #142033; line-height: 1.6;">
+      <h2 style="margin: 0 0 16px; color: #0b3f79;">New Property Submission</h2>
+      <p style="margin: 0 0 18px;">A new property lead was submitted through the Casi Bros website.</p>
+      <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 760px;">
+        <tr><td style="padding: 6px 0;"><strong>Name:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.fullName)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Email:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.email)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Phone:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.phone)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Property Address:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyAddress)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>City:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.city)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>State:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.state)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>ZIP:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.zipCode)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Property Type:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyType)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Condition:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyCondition)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Asking Price:</strong></td><td style="padding: 6px 0;">${escapeHtml(askingPrice)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Reason for Selling:</strong></td><td style="padding: 6px 0;">${reasonForSelling}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Additional Details:</strong></td><td style="padding: 6px 0;">${additionalDetails}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Preferred Contact:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.preferredContactMethod)}</td></tr>
+        <tr><td style="padding: 6px 0;"><strong>Submission ID:</strong></td><td style="padding: 6px 0;">${escapeHtml(submissionId)}</td></tr>
+      </table>
+    </div>
+  `;
+}
+
+function formatEmailText(body, submissionId) {
+  const askingPrice = body.askingPrice ? formatCurrency(body.askingPrice) : 'Not provided';
+  return [
+    'New Property Submission',
+    '',
+    `Name: ${body.fullName}`,
+    `Email: ${body.email}`,
+    `Phone: ${body.phone}`,
+    `Property Address: ${body.propertyAddress}`,
+    `City: ${body.city}`,
+    `State: ${body.state}`,
+    `ZIP: ${body.zipCode}`,
+    `Property Type: ${body.propertyType}`,
+    `Condition: ${body.propertyCondition}`,
+    `Asking Price: ${askingPrice}`,
+    `Reason for Selling: ${body.reasonForSelling || 'Not provided'}`,
+    `Additional Details: ${body.additionalDetails || 'Not provided'}`,
+    `Preferred Contact: ${body.preferredContactMethod}`,
+    `Submission ID: ${submissionId}`
+  ].join('\n');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
@@ -220,13 +302,29 @@ module.exports = async function handler(req, res) {
       receivedAt: new Date().toISOString()
     };
 
-    console.log('Property submission received', safeLog);
+    if (!resend) {
+      throw new Error('RESEND_API_KEY is not configured.');
+    }
+
+    const emailHtml = formatEmailHtml(body, submissionId);
+    const emailText = formatEmailText(body, submissionId);
+
+    await resend.emails.send({
+      from: PROPERTY_SUBMISSION_FROM,
+      to: PROPERTY_SUBMISSION_TO,
+      subject: 'New Property Submission from Casi Bros Website',
+      html: emailHtml,
+      text: emailText,
+      replyTo: body.email
+    });
+
+    console.log('Property submission emailed', safeLog);
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({
       ok: true,
-      message: 'Property submission received.',
+      message: 'Property submission sent.',
       submissionId
     }));
   } catch (error) {
