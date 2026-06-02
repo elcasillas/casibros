@@ -230,7 +230,7 @@ export default {
 
         await resend.emails.send({
           from: env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>',
-          to: env.PROPERTY_SUBMISSION_TO || 'info@casibros.com',
+          to: env.PROPERTY_SUBMISSION_TO || 'ed@casibros.com',
           subject: 'New Property Submission from Casi Bros Website',
           html: emailHtml,
           text: emailText,

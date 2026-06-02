@@ -3,7 +3,7 @@ const { Resend } = require('resend');
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
-const PROPERTY_SUBMISSION_TO = process.env.PROPERTY_SUBMISSION_TO || 'info@casibros.com';
+const PROPERTY_SUBMISSION_TO = process.env.PROPERTY_SUBMISSION_TO || 'ed@casibros.com';
 const PROPERTY_SUBMISSION_FROM =
   process.env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>';
 
