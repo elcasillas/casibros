@@ -513,7 +513,7 @@
     }
 
     .submission-copy {
-      padding: 30px;
+      padding: 22px;
       position: sticky;
       top: 110px;
       overflow: hidden;
@@ -534,19 +534,19 @@
       color: var(--navy-dark);
       font-size: 1.62rem;
       line-height: 1.15;
-      margin: 18px 0 14px;
+      margin: 14px 0 10px;
     }
 
     .submission-copy p {
       color: var(--muted);
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .info-list {
       list-style: none;
       display: grid;
-      gap: 14px;
-      margin-top: 18px;
+      gap: 10px;
+      margin-top: 12px;
       position: relative;
       z-index: 1;
     }
@@ -571,28 +571,28 @@
     }
 
     .info-note {
-      margin-top: 22px;
-      padding: 16px 18px;
+      margin-top: 16px;
+      padding: 14px 16px;
       border-radius: 18px;
       background: var(--light-blue);
       color: var(--navy-dark);
-      font-size: 0.96rem;
+      font-size: 0.92rem;
       position: relative;
       z-index: 1;
     }
 
     .submission-form-card {
-      padding: 30px;
+      padding: 14px;
     }
 
     .property-form {
       display: grid;
-      gap: 24px;
+      gap: 12px;
     }
 
     .form-status {
       display: none;
-      padding: 16px 18px;
+      padding: 12px 14px;
       border-radius: 18px;
       border: 1px solid transparent;
       font-weight: 700;
@@ -615,8 +615,8 @@
     }
 
     .form-section {
-      padding: 20px;
-      border-radius: 22px;
+      padding: 14px;
+      border-radius: 18px;
       background: #f8fbfe;
       border: 1px solid var(--border);
     }
@@ -624,18 +624,18 @@
     .form-section h3 {
       color: var(--navy-dark);
       font-size: 1.08rem;
-      margin-bottom: 16px;
+      margin-bottom: 6px;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: 8px;
     }
 
     .field {
       display: grid;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
     }
 
@@ -648,12 +648,14 @@
       color: var(--navy-dark);
       font-weight: 800;
       font-size: 0.93rem;
+      margin-bottom: 0;
     }
 
     .field-hint {
       color: var(--muted);
-      font-size: 0.88rem;
-      margin-top: -2px;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      margin-top: 0;
     }
 
     .field input,
@@ -661,8 +663,9 @@
     .field select {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 15px;
+      border-radius: 14px;
+      padding: 11px 13px;
+      min-height: 46px;
       background: #ffffff;
       color: var(--text);
       font: inherit;
@@ -682,7 +685,7 @@
     }
 
     .field textarea {
-      min-height: 140px;
+      min-height: 110px;
       resize: vertical;
     }
 
@@ -701,21 +704,32 @@
 
     .radio-group {
       display: grid;
-      gap: 10px;
+      gap: 4px;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      min-inline-size: 0;
+    }
+
+    .radio-label {
+      color: var(--navy-dark);
+      font-weight: 800;
+      font-size: 0.93rem;
+      margin-bottom: 0;
     }
 
     .choice-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 8px;
     }
 
     .choice {
       display: block;
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       background: #fff;
-      padding: 14px 15px;
+      padding: 11px 12px;
       cursor: pointer;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
@@ -735,14 +749,15 @@
       display: block;
       color: var(--text);
       font-weight: 700;
-      line-height: 1.3;
+      line-height: 1.05;
     }
 
     .choice small {
       display: block;
       color: var(--muted);
-      margin-top: 4px;
-      font-size: 0.86rem;
+      margin-top: 0;
+      font-size: 0.8rem;
+      line-height: 1.2;
     }
 
     .choice:has(input:checked),
@@ -753,23 +768,26 @@
     }
 
     .checkbox-field {
-      display: grid;
-      grid-template-columns: 22px 1fr;
-      gap: 12px;
-      align-items: start;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
       color: var(--text);
+      line-height: 1.35;
+      margin-top: 0;
     }
 
     .checkbox-field input {
-      width: 22px;
-      height: 22px;
-      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      margin: 2px 0 0;
+      flex: 0 0 18px;
       accent-color: var(--red);
     }
 
     .checkbox-copy {
       color: var(--text);
       font-weight: 600;
+      line-height: 1.35;
     }
 
     .checkbox-copy a {
@@ -779,9 +797,9 @@
     }
 
     .field-error {
-      min-height: 1.2em;
+      min-height: 0.9em;
       color: #b3202b;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 700;
     }
 
@@ -794,13 +812,14 @@
 
     .form-actions {
       display: grid;
-      gap: 12px;
-      margin-top: 4px;
+      gap: 6px;
+      margin-top: 0;
     }
 
     .submit-btn {
       width: 100%;
-      min-height: 56px;
+      min-height: 52px;
+      padding: 11px 18px;
       background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
       color: var(--white);
       box-shadow: 0 16px 30px rgba(179, 32, 43, 0.24);
@@ -830,7 +849,7 @@
 
     .privacy-note {
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.84rem;
       text-align: center;
     }
 
@@ -953,16 +972,24 @@
 
       .submission-copy,
       .submission-form-card {
-        padding: 22px;
+        padding: 14px;
         border-radius: 24px;
       }
 
       .form-section {
-        padding: 16px;
+        padding: 12px;
       }
 
       .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .choice-grid {
+        gap: 8px;
+      }
+
+      .checkbox-field {
+        gap: 8px;
       }
     }
   </style>
@@ -1276,8 +1303,8 @@
               <section class="form-section" aria-labelledby="contact-preference-heading">
                 <h3 id="contact-preference-heading">Contact Preference</h3>
                 <div class="form-grid">
-                  <fieldset class="field full radio-group">
-                    <legend>Preferred contact method</legend>
+                  <div class="field full radio-group">
+                    <div class="radio-label">Preferred contact method</div>
                     <div class="choice-grid">
                       <label class="choice">
                         <input type="radio" name="preferredContactMethod" value="Phone" required />
@@ -1298,7 +1325,7 @@
                       </label>
                     </div>
                     <div class="field-error" id="preferred-contact-method-error"></div>
-                  </fieldset>
+                  </div>
 
                   <div class="field full">
                     <label class="checkbox-field" for="consent">
