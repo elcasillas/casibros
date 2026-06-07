@@ -13,3 +13,12 @@ The property submission endpoint sends email through Resend.
 
 - `npm run lint`
 - `npm run build`
+
+## Cloudflare Deploy
+
+Pushes to `main` trigger the GitHub Actions workflow in `.github/workflows/deploy.yml`.
+
+Required repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
