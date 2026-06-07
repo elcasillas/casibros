@@ -582,12 +582,12 @@
     }
 
     .submission-form-card {
-      padding: 14px;
+      padding: 12px;
     }
 
     .property-form {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .form-status {
@@ -615,8 +615,8 @@
     }
 
     .form-section {
-      padding: 14px;
-      border-radius: 18px;
+      padding: 12px;
+      border-radius: 16px;
       background: #f8fbfe;
       border: 1px solid var(--border);
     }
@@ -624,19 +624,21 @@
     .form-section h3 {
       color: var(--navy-dark);
       font-size: 1.08rem;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
+      align-items: start;
     }
 
     .field {
       display: grid;
-      gap: 6px;
+      gap: 4px;
       min-width: 0;
+      align-content: start;
     }
 
     .field.full {
@@ -653,8 +655,8 @@
 
     .field-hint {
       color: var(--muted);
-      font-size: 0.8rem;
-      line-height: 1.25;
+      font-size: 0.76rem;
+      line-height: 1.15;
       margin-top: 0;
     }
 
@@ -664,8 +666,9 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 11px 13px;
-      min-height: 46px;
+      height: 44px;
+      padding: 0 12px;
+      line-height: 44px;
       background: #ffffff;
       color: var(--text);
       font: inherit;
@@ -686,6 +689,9 @@
 
     .field textarea {
       min-height: 110px;
+      height: auto;
+      padding: 10px 12px;
+      line-height: 1.4;
       resize: vertical;
     }
 
@@ -699,7 +705,7 @@
         calc(100% - 16px) calc(50% - 2px);
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
-      padding-right: 44px;
+      padding-right: 38px;
     }
 
     .radio-group {
@@ -721,7 +727,7 @@
     .choice-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 6px;
     }
 
     .choice {
@@ -729,7 +735,7 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       background: #fff;
-      padding: 11px 12px;
+      padding: 10px 12px;
       cursor: pointer;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
@@ -756,8 +762,8 @@
       display: block;
       color: var(--muted);
       margin-top: 0;
-      font-size: 0.8rem;
-      line-height: 1.2;
+      font-size: 0.78rem;
+      line-height: 1.15;
     }
 
     .choice:has(input:checked),
@@ -769,17 +775,17 @@
 
     .checkbox-field {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
+      align-items: center;
+      gap: 8px;
       color: var(--text);
-      line-height: 1.35;
+      line-height: 1.3;
       margin-top: 0;
     }
 
     .checkbox-field input {
       width: 18px;
       height: 18px;
-      margin: 2px 0 0;
+      margin: 0;
       flex: 0 0 18px;
       accent-color: var(--red);
     }
@@ -787,7 +793,7 @@
     .checkbox-copy {
       color: var(--text);
       font-weight: 600;
-      line-height: 1.35;
+      line-height: 1.3;
     }
 
     .checkbox-copy a {
@@ -797,9 +803,9 @@
     }
 
     .field-error {
-      min-height: 0.9em;
+      min-height: 0.8em;
       color: #b3202b;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
     }
 
@@ -812,7 +818,7 @@
 
     .form-actions {
       display: grid;
-      gap: 6px;
+      gap: 4px;
       margin-top: 0;
     }
 
@@ -849,7 +855,7 @@
 
     .privacy-note {
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       text-align: center;
     }
 
@@ -972,12 +978,12 @@
 
       .submission-copy,
       .submission-form-card {
-        padding: 14px;
+        padding: 12px;
         border-radius: 24px;
       }
 
       .form-section {
-        padding: 12px;
+        padding: 10px;
       }
 
       .form-grid {
@@ -985,7 +991,7 @@
       }
 
       .choice-grid {
-        gap: 8px;
+        gap: 6px;
       }
 
       .checkbox-field {
