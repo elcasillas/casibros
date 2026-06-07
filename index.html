@@ -1198,7 +1198,7 @@
 
             <ul class="info-list">
               <li>We review submissions from property owners, agents, and referral partners.</li>
-              <li>Helpful details include condition, timeline, and whether the seller wants a quick sale.</li>
+              <li>Helpful details include condition and whether the seller wants a quick sale.</li>
               <li>Our focus is on homes, townhomes, condos, multi-family properties, and land in the region.</li>
             </ul>
 
@@ -1237,30 +1237,6 @@
               <section class="form-section" aria-labelledby="property-info-heading">
                 <h3 id="property-info-heading">Property Information</h3>
                 <div class="form-grid">
-                  <div class="field full">
-                    <label for="property-address">Property address</label>
-                    <input id="property-address" name="propertyAddress" type="text" autocomplete="street-address" placeholder="123 Main St" required />
-                    <div class="field-error" id="property-address-error"></div>
-                  </div>
-
-                  <div class="field">
-                    <label for="city">City</label>
-                    <input id="city" name="city" type="text" autocomplete="address-level2" placeholder="Asheville" required />
-                    <div class="field-error" id="city-error"></div>
-                  </div>
-
-                  <div class="field">
-                    <label for="state">State</label>
-                    <input id="state" name="state" type="text" autocomplete="address-level1" placeholder="NC" maxlength="30" required />
-                    <div class="field-error" id="state-error"></div>
-                  </div>
-
-                  <div class="field">
-                    <label for="zip-code">ZIP code</label>
-                    <input id="zip-code" name="zipCode" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="28801" required />
-                    <div class="field-error" id="zip-code-error"></div>
-                  </div>
-
                   <div class="field">
                     <label for="asking-price">Asking price <span class="field-hint">(optional)</span></label>
                     <input id="asking-price" name="askingPrice" type="text" inputmode="decimal" placeholder="$450,000" />
@@ -1293,25 +1269,6 @@
                       <option value="Unknown">Unknown</option>
                     </select>
                     <div class="field-error" id="property-condition-error"></div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="form-section" aria-labelledby="selling-details-heading">
-                <h3 id="selling-details-heading">Selling Details</h3>
-                <div class="form-grid">
-                  <div class="field full">
-                    <label for="reason-for-selling">Reason for selling</label>
-                    <textarea id="reason-for-selling" name="reasonForSelling" placeholder="Tell us what is motivating the sale, timeline, or any special circumstances."></textarea>
-                    <div class="field-hint">Optional, but helpful for understanding the opportunity.</div>
-                    <div class="field-error" id="reason-for-selling-error"></div>
-                  </div>
-
-                  <div class="field full">
-                    <label for="additional-details">Additional property details</label>
-                    <textarea id="additional-details" name="additionalDetails" placeholder="Describe repairs needed, occupancy status, special features, tenant situation, access instructions, or anything else we should know."></textarea>
-                    <div class="field-hint">Optional. Include any context that would help us evaluate the property.</div>
-                    <div class="field-error" id="additional-details-error"></div>
                   </div>
                 </div>
               </section>
@@ -1392,15 +1349,9 @@
         fullName: document.getElementById('full-name'),
         email: document.getElementById('email-address'),
         phone: document.getElementById('phone-number'),
-        propertyAddress: document.getElementById('property-address'),
-        city: document.getElementById('city'),
-        state: document.getElementById('state'),
-        zipCode: document.getElementById('zip-code'),
+        askingPrice: document.getElementById('asking-price'),
         propertyType: document.getElementById('property-type'),
         propertyCondition: document.getElementById('property-condition'),
-        askingPrice: document.getElementById('asking-price'),
-        reasonForSelling: document.getElementById('reason-for-selling'),
-        additionalDetails: document.getElementById('additional-details'),
         consent: document.getElementById('consent')
       };
 
@@ -1408,15 +1359,9 @@
         fullName: 'full-name-error',
         email: 'email-address-error',
         phone: 'phone-number-error',
-        propertyAddress: 'property-address-error',
-        city: 'city-error',
-        state: 'state-error',
-        zipCode: 'zip-code-error',
+        askingPrice: 'asking-price-error',
         propertyType: 'property-type-error',
         propertyCondition: 'property-condition-error',
-        askingPrice: 'asking-price-error',
-        reasonForSelling: 'reason-for-selling-error',
-        additionalDetails: 'additional-details-error',
         preferredContactMethod: 'preferred-contact-method-error',
         consent: 'consent-error'
       };
@@ -1552,28 +1497,15 @@
             if (digits.length < 10) return 'Enter a valid phone number with at least 10 digits.';
             return '';
           }
-          case 'propertyAddress':
-            if (!value) return 'Property address is required.';
-            return '';
-          case 'city':
-            if (!value) return 'City is required.';
-            return '';
-          case 'state':
-            if (!value) return 'State is required.';
-            return '';
-          case 'zipCode':
-            if (!value) return 'ZIP code is required.';
-            if (!/^\d{5}(-\d{4})?$/.test(value)) return 'Enter a valid ZIP code.';
+          case 'askingPrice':
+            if (!value) return '';
+            if (parseCurrency(value) === null) return 'Enter a valid currency amount.';
             return '';
           case 'propertyType':
             if (!fields.propertyType.value) return 'Property type is required.';
             return '';
           case 'propertyCondition':
             if (!fields.propertyCondition.value) return 'Estimated property condition is required.';
-            return '';
-          case 'askingPrice':
-            if (!value) return '';
-            if (parseCurrency(value) === null) return 'Enter a valid currency amount.';
             return '';
           case 'preferredContactMethod':
             if (!form.querySelector('input[name="preferredContactMethod"]:checked')) {
@@ -1596,7 +1528,7 @@
 
       function validateForm() {
         const errors = {};
-        ['fullName', 'email', 'phone', 'propertyAddress', 'city', 'state', 'zipCode', 'propertyType', 'propertyCondition', 'askingPrice', 'preferredContactMethod', 'consent'].forEach((name) => {
+        ['fullName', 'email', 'phone', 'askingPrice', 'propertyType', 'propertyCondition', 'preferredContactMethod', 'consent'].forEach((name) => {
           const error = validateField(name);
           if (error) {
             errors[name] = error;
@@ -1617,7 +1549,7 @@
       }
 
       function focusFirstError(errors) {
-        const order = ['fullName', 'email', 'phone', 'propertyAddress', 'city', 'state', 'zipCode', 'propertyType', 'propertyCondition', 'askingPrice', 'preferredContactMethod', 'consent'];
+        const order = ['fullName', 'email', 'phone', 'askingPrice', 'propertyType', 'propertyCondition', 'preferredContactMethod', 'consent'];
         const first = order.find((name) => errors[name]);
 
         if (!first) {
@@ -1644,15 +1576,9 @@
           fullName: fields.fullName.value.trim(),
           email: fields.email.value.trim(),
           phone: fields.phone.value.trim(),
-          propertyAddress: fields.propertyAddress.value.trim(),
-          city: fields.city.value.trim(),
-          state: fields.state.value.trim(),
-          zipCode: fields.zipCode.value.trim(),
+          askingPrice: fields.askingPrice.value.trim(),
           propertyType: fields.propertyType.value,
           propertyCondition: fields.propertyCondition.value,
-          askingPrice: fields.askingPrice.value.trim(),
-          reasonForSelling: fields.reasonForSelling.value.trim(),
-          additionalDetails: fields.additionalDetails.value.trim(),
           preferredContactMethod: preferredContactMethod ? preferredContactMethod.value : '',
           consent: fields.consent.checked
         };
