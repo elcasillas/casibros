@@ -119,15 +119,9 @@ function validatePayload(payload) {
     fullName: trimString(payload.fullName),
     email: trimString(payload.email),
     phone: trimString(payload.phone),
-    propertyAddress: trimString(payload.propertyAddress),
-    city: trimString(payload.city),
-    state: trimString(payload.state),
-    zipCode: trimString(payload.zipCode),
     propertyType: trimString(payload.propertyType),
     propertyCondition: trimString(payload.propertyCondition),
     askingPrice: trimString(payload.askingPrice),
-    reasonForSelling: trimString(payload.reasonForSelling),
-    additionalDetails: trimString(payload.additionalDetails),
     preferredContactMethod: trimString(payload.preferredContactMethod),
     consent: Boolean(payload.consent)
   };
@@ -143,15 +137,6 @@ function validatePayload(payload) {
     errors.phone = 'Phone number is required.';
   } else if (normalizePhone(body.phone).length < 10) {
     errors.phone = 'Enter a valid phone number with at least 10 digits.';
-  }
-
-  if (!body.propertyAddress) errors.propertyAddress = 'Property address is required.';
-  if (!body.city) errors.city = 'City is required.';
-  if (!body.state) errors.state = 'State is required.';
-  if (!body.zipCode) {
-    errors.zipCode = 'ZIP code is required.';
-  } else if (!/^\d{5}(-\d{4})?$/.test(body.zipCode)) {
-    errors.zipCode = 'Enter a valid ZIP code.';
   }
 
   if (!body.propertyType) {
@@ -201,10 +186,6 @@ function maskPhone(phone) {
 
 function formatEmailHtml(body, submissionId) {
   const askingPrice = body.askingPrice ? formatCurrency(body.askingPrice) : 'Not provided';
-  const reasonForSelling = body.reasonForSelling ? escapeHtml(body.reasonForSelling).replace(/\n/g, '<br />') : 'Not provided';
-  const additionalDetails = body.additionalDetails
-    ? escapeHtml(body.additionalDetails).replace(/\n/g, '<br />')
-    : 'Not provided';
 
   return `
     <div style="font-family: Arial, Helvetica, sans-serif; color: #142033; line-height: 1.6;">
@@ -214,15 +195,9 @@ function formatEmailHtml(body, submissionId) {
         <tr><td style="padding: 6px 0;"><strong>Name:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.fullName)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Email:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.email)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Phone:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.phone)}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>Property Address:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyAddress)}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>City:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.city)}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>State:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.state)}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>ZIP:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.zipCode)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Property Type:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyType)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Condition:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.propertyCondition)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Asking Price:</strong></td><td style="padding: 6px 0;">${escapeHtml(askingPrice)}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>Reason for Selling:</strong></td><td style="padding: 6px 0;">${reasonForSelling}</td></tr>
-        <tr><td style="padding: 6px 0;"><strong>Additional Details:</strong></td><td style="padding: 6px 0;">${additionalDetails}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Preferred Contact:</strong></td><td style="padding: 6px 0;">${escapeHtml(body.preferredContactMethod)}</td></tr>
         <tr><td style="padding: 6px 0;"><strong>Submission ID:</strong></td><td style="padding: 6px 0;">${escapeHtml(submissionId)}</td></tr>
       </table>
@@ -238,15 +213,9 @@ function formatEmailText(body, submissionId) {
     `Name: ${body.fullName}`,
     `Email: ${body.email}`,
     `Phone: ${body.phone}`,
-    `Property Address: ${body.propertyAddress}`,
-    `City: ${body.city}`,
-    `State: ${body.state}`,
-    `ZIP: ${body.zipCode}`,
     `Property Type: ${body.propertyType}`,
     `Condition: ${body.propertyCondition}`,
     `Asking Price: ${askingPrice}`,
-    `Reason for Selling: ${body.reasonForSelling || 'Not provided'}`,
-    `Additional Details: ${body.additionalDetails || 'Not provided'}`,
     `Preferred Contact: ${body.preferredContactMethod}`,
     `Submission ID: ${submissionId}`
   ].join('\n');
@@ -292,13 +261,10 @@ module.exports = async function handler(req, res) {
       submissionId,
       email: maskEmail(body.email),
       phone: maskPhone(body.phone),
-      location: `${body.city}, ${body.state}`,
       propertyType: body.propertyType,
       propertyCondition: body.propertyCondition,
       askingPrice: body.askingPrice ? parseCurrency(body.askingPrice) : null,
       preferredContactMethod: body.preferredContactMethod,
-      hasReasonForSelling: Boolean(body.reasonForSelling),
-      hasAdditionalDetails: Boolean(body.additionalDetails),
       receivedAt: new Date().toISOString()
     };
 
