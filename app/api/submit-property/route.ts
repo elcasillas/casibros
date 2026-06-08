@@ -1,15 +1,18 @@
 import { randomUUID } from 'node:crypto';
+import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-function trimString(value) {
+export const runtime = 'nodejs';
+
+function trimString(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function normalizePhone(value) {
+function normalizePhone(value: unknown) {
   return trimString(value).replace(/\D/g, '');
 }
 
-function parseCurrency(value) {
+function parseCurrency(value: unknown) {
   const cleaned = trimString(value).replace(/[$,\s]/g, '');
   if (!cleaned) {
     return null;
@@ -19,7 +22,7 @@ function parseCurrency(value) {
   return Number.isFinite(numeric) && numeric >= 0 ? numeric : null;
 }
 
-function formatCurrency(value) {
+function formatCurrency(value: unknown) {
   const numeric = parseCurrency(value);
   if (numeric === null) {
     return '';
@@ -32,7 +35,7 @@ function formatCurrency(value) {
   }).format(numeric);
 }
 
-function escapeHtml(value) {
+function escapeHtml(value: unknown) {
   return trimString(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -60,8 +63,8 @@ const ALLOWED_PROPERTY_CONDITIONS = new Set([
 
 const ALLOWED_CONTACT_METHODS = new Set(['Phone', 'Email', 'Text Message']);
 
-function validatePayload(payload) {
-  const errors = {};
+function validatePayload(payload: Record<string, unknown>) {
+  const errors: Record<string, string> = {};
   const body = {
     fullName: trimString(payload.fullName),
     email: trimString(payload.email),
@@ -113,7 +116,7 @@ function validatePayload(payload) {
   return { body, errors };
 }
 
-function formatEmailHtml(body, submissionId) {
+function formatEmailHtml(body: ReturnType<typeof validatePayload>['body'], submissionId: string) {
   const askingPrice = body.askingPrice ? formatCurrency(body.askingPrice) : 'Not provided';
 
   return `
@@ -134,7 +137,7 @@ function formatEmailHtml(body, submissionId) {
   `;
 }
 
-function formatEmailText(body, submissionId) {
+function formatEmailText(body: ReturnType<typeof validatePayload>['body'], submissionId: string) {
   const askingPrice = body.askingPrice ? formatCurrency(body.askingPrice) : 'Not provided';
   return [
     'New Property Submission',
@@ -150,78 +153,56 @@ function formatEmailText(body, submissionId) {
   ].join('\n');
 }
 
-function json(data, init = {}) {
-  return new Response(JSON.stringify(data), {
-    status: init.status || 200,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers || {})
-    }
-  });
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
 }
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
+export async function POST(request: Request) {
+  try {
+    const payload = (await request.json()) as Record<string, unknown>;
+    const { body, errors } = validatePayload(payload);
 
-    if (url.pathname === '/api/submit-property') {
-      if (request.method === 'OPTIONS') {
-        return new Response(null, { status: 204 });
-      }
-
-      if (request.method !== 'POST') {
-        return json({ ok: false, message: 'Method not allowed.' }, { status: 405 });
-      }
-
-      try {
-        const payload = await request.json();
-        const { body, errors } = validatePayload(payload);
-
-        if (Object.keys(errors).length > 0) {
-          return json(
-            {
-              ok: false,
-              message: 'Please correct the highlighted fields.',
-              fieldErrors: errors
-            },
-            { status: 400 }
-          );
-        }
-
-        if (!env.RESEND_API_KEY) {
-          throw new Error('RESEND_API_KEY is not configured.');
-        }
-
-        const resend = new Resend(env.RESEND_API_KEY);
-        const submissionId = randomUUID();
-        const emailHtml = formatEmailHtml(body, submissionId);
-        const emailText = formatEmailText(body, submissionId);
-
-        await resend.emails.send({
-          from: env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>',
-          to: env.PROPERTY_SUBMISSION_TO || 'ed@casibros.com',
-          subject: 'New Property Submission from Casi Bros Website',
-          html: emailHtml,
-          text: emailText,
-          replyTo: body.email
-        });
-
-        return json({
-          ok: true,
-          message: 'Property submission sent.',
-          submissionId
-        });
-      } catch (error) {
-        return json(
-          {
-            ok: false,
-            message: 'Unable to send property submission.'
-          },
-          { status: 500 }
-        );
-      }
+    if (Object.keys(errors).length > 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: 'Please correct the highlighted fields.',
+          fieldErrors: errors
+        },
+        { status: 400 }
+      );
     }
 
-    return env.ASSETS.fetch(request);
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not configured.');
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const submissionId = randomUUID();
+    const emailHtml = formatEmailHtml(body, submissionId);
+    const emailText = formatEmailText(body, submissionId);
+
+    await resend.emails.send({
+      from: process.env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>',
+      to: process.env.PROPERTY_SUBMISSION_TO || 'ed@casibros.com',
+      subject: 'New Property Submission from Casi Bros Website',
+      html: emailHtml,
+      text: emailText,
+      replyTo: body.email
+    });
+
+    return NextResponse.json({
+      ok: true,
+      message: 'Property submission sent.',
+      submissionId
+    });
+  } catch {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: 'Unable to send property submission.'
+      },
+      { status: 500 }
+    );
   }
-};
+}
