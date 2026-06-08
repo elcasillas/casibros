@@ -26,6 +26,15 @@ The property submission API sends email through Resend.
 - `PROPERTY_SUBMISSION_TO`
 - `PROPERTY_SUBMISSION_FROM`
 
+## Cloudflare Deploy
+
+Pushes to `main` trigger the GitHub Actions workflow in `.github/workflows/deploy.yml`.
+
+Required repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
 ## Routes
 
 - `/` - marketing homepage
