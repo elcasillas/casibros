@@ -14,7 +14,7 @@ export function Hero() {
           <div className="eyebrow">We Buy · Renovate · Sell · Rent</div>
 
           <h1 id="hero-title" className="hero-title">
-            We turn overlooked houses into modern homes!
+            We turn overlooked houses into modern homes.
           </h1>
 
           <p className="hero-copy">
