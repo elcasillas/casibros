@@ -25,7 +25,7 @@ export function WhatWeDoSection() {
   return (
     <Section
       id="what-we-do"
-      title="A simple model built around improving homes in Western North Carolina."
+      title="A model built around improving homes in Western North Carolina."
       description="We look for homes that need work across Western North Carolina, invest in the right renovations, and return them to the market as attractive, functional, and livable properties."
     >
       <div className="feature-grid">
