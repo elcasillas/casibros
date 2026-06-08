@@ -1,11 +1,5 @@
 import Link from 'next/link';
 
-const heroPoints = [
-  { number: '01', text: 'We buy homes' },
-  { number: '02', text: 'We renovate them' },
-  { number: '03', text: 'We sell or rent' }
-] as const;
-
 export function Hero() {
   return (
     <section className="hero-section" aria-labelledby="hero-title">
@@ -30,15 +24,6 @@ export function Hero() {
             <Link href="/#what-we-do" className="secondary-button">
               Learn What We Do
             </Link>
-          </div>
-
-          <div className="hero-points">
-            {heroPoints.map((point) => (
-              <div key={point.number} className="hero-point">
-                <strong className="hero-point-number">{point.number}</strong>
-                <span className="hero-point-text">{point.text}</span>
-              </div>
-            ))}
           </div>
         </div>
 
