@@ -153,6 +153,22 @@ function formatEmailText(body: ReturnType<typeof validatePayload>['body'], submi
   ].join('\n');
 }
 
+function getFromEmail() {
+  return (
+    trimString(process.env.PROPERTY_SUBMISSION_FROM_EMAIL) ||
+    trimString(process.env.PROPERTY_SUBMISSION_FROM) ||
+    'Casi Bros <onboarding@resend.dev>'
+  );
+}
+
+function getToEmail() {
+  return (
+    trimString(process.env.PROPERTY_SUBMISSION_TO_EMAIL) ||
+    trimString(process.env.PROPERTY_SUBMISSION_TO) ||
+    'ed@casibros.com'
+  );
+}
+
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204 });
 }
@@ -183,8 +199,8 @@ export async function POST(request: Request) {
     const emailText = formatEmailText(body, submissionId);
 
     await resend.emails.send({
-      from: process.env.PROPERTY_SUBMISSION_FROM || 'Casi Bros <onboarding@resend.dev>',
-      to: process.env.PROPERTY_SUBMISSION_TO || 'ed@casibros.com',
+      from: getFromEmail(),
+      to: getToEmail(),
       subject: 'New Property Submission from Casi Bros Website',
       html: emailHtml,
       text: emailText,
@@ -196,7 +212,11 @@ export async function POST(request: Request) {
       message: 'Property submission sent.',
       submissionId
     });
-  } catch {
+  } catch (error) {
+    console.error('Property submission failed', {
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+
     return NextResponse.json(
       {
         ok: false,

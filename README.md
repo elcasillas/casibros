@@ -23,8 +23,19 @@ The app runs locally at `http://localhost:3000`.
 The property submission API sends email through Resend.
 
 - `RESEND_API_KEY`
+- `PROPERTY_SUBMISSION_TO_EMAIL=info@casibros.com`
+- `PROPERTY_SUBMISSION_FROM_EMAIL`
+
+Backward-compatible fallbacks are also accepted for older deployments:
+
 - `PROPERTY_SUBMISSION_TO`
 - `PROPERTY_SUBMISSION_FROM`
+
+Use a Resend-verified sending domain for production. For local development, you can temporarily use Resend's test sender:
+
+```bash
+PROPERTY_SUBMISSION_FROM_EMAIL="Casi Bros <donotreply@casibros.com>"
+```
 
 ## Cloudflare Deploy
 
