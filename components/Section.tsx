@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 type SectionProps = {
   id: string;
   title: string;
-  description: string;
+  description: ReactNode;
   children: ReactNode;
   sectionClassName?: string;
   panelClassName?: string;

@@ -23,8 +23,16 @@ The app runs locally at `http://localhost:3000`.
 The property submission API sends email through Resend.
 
 - `RESEND_API_KEY`
-- `PROPERTY_SUBMISSION_TO`
-- `PROPERTY_SUBMISSION_FROM`
+- `PROPERTY_SUBMISSION_TO_EMAIL=info@casibros.com`
+- `PROPERTY_SUBMISSION_FROM_EMAIL`
+
+Use a Resend-verified sending domain for production. For local development, you can temporarily use Resend's test sender:
+
+```bash
+PROPERTY_SUBMISSION_FROM_EMAIL="Casi Bros <donotreply@casibros.com>"
+```
+
+Do not prefix `RESEND_API_KEY` with `NEXT_PUBLIC_`.
 
 ## Cloudflare Deploy
 
@@ -39,7 +47,7 @@ Required repository secrets:
 
 - `/` - marketing homepage
 - `/submit-property` - dedicated property submission page
-- `/api/submit-property` - form submission API route
+- `/api/send-property-submission` - form submission API route
 
 ## Project Structure
 
@@ -48,7 +56,7 @@ app/
   layout.tsx
   page.tsx
   submit-property/page.tsx
-  api/submit-property/route.ts
+  api/send-property-submission/route.ts
 components/
   Header.tsx
   Footer.tsx
