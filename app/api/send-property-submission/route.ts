@@ -202,7 +202,9 @@ function buildEmailText(body: SubmissionBody, submissionId: string) {
 }
 
 function getFromEmail() {
-  const configuredFrom = trimString(process.env.PROPERTY_SUBMISSION_FROM_EMAIL);
+  const configuredFrom =
+    trimString(process.env.PROPERTY_SUBMISSION_FROM_EMAIL) ||
+    trimString(process.env.PROPERTY_SUBMISSION_FROM);
   if (configuredFrom) {
     return configuredFrom;
   }
@@ -215,7 +217,11 @@ function getFromEmail() {
 }
 
 function getToEmail() {
-  return trimString(process.env.PROPERTY_SUBMISSION_TO_EMAIL) || 'info@casibros.com';
+  return (
+    trimString(process.env.PROPERTY_SUBMISSION_TO_EMAIL) ||
+    trimString(process.env.PROPERTY_SUBMISSION_TO) ||
+    'info@casibros.com'
+  );
 }
 
 async function handleSubmission(request: Request) {

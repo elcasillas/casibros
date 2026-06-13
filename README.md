@@ -26,6 +26,11 @@ The property submission API sends email through Resend.
 - `PROPERTY_SUBMISSION_TO_EMAIL=info@casibros.com`
 - `PROPERTY_SUBMISSION_FROM_EMAIL`
 
+Backward-compatible fallbacks are also accepted for older deployments:
+
+- `PROPERTY_SUBMISSION_TO`
+- `PROPERTY_SUBMISSION_FROM`
+
 Use a Resend-verified sending domain for production. For local development, you can temporarily use Resend's test sender:
 
 ```bash
