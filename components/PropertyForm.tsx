@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import type { Dispatch, FormEvent, SetStateAction } from 'react';
 
@@ -148,15 +149,17 @@ function clearFieldError(name: keyof FormValues | 'preferredContactMethod', setE
 }
 
 export function PropertyForm() {
+  const router = useRouter();
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [status, setStatus] = useState<{ type: 'sending' | 'error'; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const statusRef = useRef<HTMLDivElement | null>(null);
 
   function updateField(name: keyof FormValues, value: string | boolean) {
     setValues((current) => ({ ...current, [name]: value }));
-    setStatus(null);
+    setStatus((current) => (current?.type === 'error' ? null : current));
     clearFieldError(name, setErrors);
   }
 
@@ -189,6 +192,10 @@ export function PropertyForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmittingRef.current) {
+      return;
+    }
+
     setStatus(null);
 
     const nextErrors = validateForm(values);
@@ -198,10 +205,12 @@ export function PropertyForm() {
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
+    setStatus({ type: 'sending', message: 'Sending your property submission...' });
 
     try {
-      const response = await fetch('/api/submit-property', {
+      const response = await fetch('/api/send-property-submission', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -232,22 +241,17 @@ export function PropertyForm() {
         return;
       }
 
-      setValues(initialValues);
-      setErrors({});
-      setStatus({
-        type: 'success',
-        message:
-          'Thank you. Your property information has been submitted. A member of the Casi Bros team will follow up shortly.'
-      });
-      statusRef.current?.focus();
+      router.push('/submit-property/success');
+      return;
     } catch {
       setStatus({
         type: 'error',
-        message: 'Submission failed due to a network or server issue. Please try again in a moment.'
+        message: 'We could not send your submission right now. Please try again in a moment.'
       });
       statusRef.current?.focus();
     } finally {
       setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   }
 
@@ -272,7 +276,7 @@ export function PropertyForm() {
   }
 
   return (
-    <form className="property-form" onSubmit={handleSubmit} noValidate>
+    <form className="property-form" onSubmit={handleSubmit} noValidate aria-busy={isSubmitting}>
       <div
         ref={statusRef}
         className={`form-status ${status ? `is-visible ${status.type}` : ''}`}
@@ -493,7 +497,7 @@ export function PropertyForm() {
       <div className="submit-actions">
         <button className={`submit-button ${isSubmitting ? 'is-loading' : ''}`} type="submit" disabled={isSubmitting}>
           <span className="submit-spinner" aria-hidden="true" />
-          <span>{isSubmitting ? 'Submitting...' : 'Submit Property'}</span>
+          <span>{isSubmitting ? 'Sending...' : 'Submit Property'}</span>
         </button>
         <div className="privacy-note">
           We only use your information to review the submission and respond about the property.

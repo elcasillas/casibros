@@ -347,6 +347,10 @@ img {
     @apply border-[#bfe6cd] bg-[#eaf6ef] text-[#0f5132];
   }
 
+  .form-status.sending {
+    @apply border-[#cfe2ff] bg-[#eef5ff] text-[#0b3f79];
+  }
+
   .form-status.error {
     @apply border-[#f3c3c9] bg-[#fbeaec] text-[#842029];
   }
